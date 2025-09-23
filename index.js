@@ -14,4 +14,5 @@ app.get('/cat', (req, res) => {
     res.send('고양이')
   })
 
-app.listen(3000)
+
+app.listen(8000)
