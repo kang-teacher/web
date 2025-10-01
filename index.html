@@ -50,7 +50,7 @@
     const TOTAL_ROUNDS = 5;
     document.getElementById('total').textContent = TOTAL_ROUNDS;
 
-    let current = null;  // { img, options, answer }
+    let current = null;
     let canAnswer = false;
     let score = 0;
     let round = 0;
@@ -64,6 +64,8 @@
     const scoreEl = document.getElementById('score');
     const roundEl = document.getElementById('round');
 
+    const API_BASE = 'https://web-1-ombv.onrender.com';
+
     startBtn.addEventListener('click', () => {
       score = 0; round = 0;
       scoreEl.textContent = score;
@@ -76,7 +78,6 @@
 
     nextBtn.addEventListener('click', () => {
       if (round >= TOTAL_ROUNDS) {
-        // 게임 리셋
         startBtn.style.display = 'inline-block';
         nextBtn.style.display = 'none';
         quizArea.style.display = 'none';
@@ -89,7 +90,7 @@
     });
 
     function loadQuestion() {
-      fetch('http://localhost:3001/quiz/image')
+      fetch(`${API_BASE}/quiz/image`)
         .then(r => r.json())
         .then(data => {
           current = data;
@@ -97,7 +98,6 @@
           roundEl.textContent = round;
           resultEl.textContent = '';
 
-          // 문제 화면 렌더
           imageBox.innerHTML = `<img src="${data.img}" alt="animal">`;
           optionsEl.innerHTML = '';
           data.options.forEach(opt => {
@@ -108,12 +108,7 @@
           });
           canAnswer = true;
 
-          // 마지막 문제 이후 버튼 문구 변경
-          if (round === TOTAL_ROUNDS) {
-            nextBtn.textContent = '결과 보기';
-          } else {
-            nextBtn.textContent = '다음 문제';
-          }
+          nextBtn.textContent = (round === TOTAL_ROUNDS) ? '결과 보기' : '다음 문제';
         })
         .catch(err => {
           console.error(err);
@@ -136,7 +131,6 @@
         resultEl.className = 'status bad';
       }
 
-      // 모든 문제가 끝났을 때 결과 메시지
       if (round === TOTAL_ROUNDS) {
         setTimeout(() => {
           resultEl.textContent = `퀴즈 종료 — 점수: ${score}/${TOTAL_ROUNDS}`;
@@ -144,10 +138,9 @@
       }
     }
 
-    // 기존 소리 API 테스트(참고용)
     function getSound() {
       const name = document.getElementById('name').value;
-      fetch(`http://localhost:3001/sound/${name}`)
+      fetch(`${API_BASE}/sound/${name}`)
         .then((response) => response.json())
         .then((data) => {
           document.getElementById('sound').innerHTML = data.sound || '';
